@@ -2,8 +2,9 @@ package com.ederfmatos.testesunitarios.servicos;
 
 import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Date;
 
@@ -26,9 +27,11 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario, filme);
 
 		// Verificação
-		assertEquals(25.00, locacao.getValor(), 0.1);
-		assertTrue(isMesmaData(locacao.getDataLocacao(), new Date()));
-		assertTrue(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
+		assertThat(locacao.getValor(), is(25.00));
+		assertThat(locacao.getValor(), is(equalTo(25.00)));
+
+		assertThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		assertThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
 	}
 
 }
