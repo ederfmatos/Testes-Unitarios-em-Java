@@ -4,8 +4,11 @@ package com.ederfmatos.testesunitarios.servicos;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.adicionarDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
+
+import org.junit.Test;
 
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
@@ -31,7 +34,8 @@ public class LocacaoService {
 		return locacao;
 	}
 
-	public static void main(String[] args) {
+	@Test
+	public void teste() {
 		// Cenário
 		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
@@ -41,8 +45,8 @@ public class LocacaoService {
 		Locacao locacao = service.alugarFilme(usuario, filme);
 		
 		// Verificação
-		System.out.println(locacao.getValor() == 25.0);
-		System.out.println(isMesmaData(locacao.getDataLocacao(), new Date()));
-		System.out.println(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
+		assertTrue(locacao.getValor() == 25.00);
+		assertTrue(isMesmaData(locacao.getDataLocacao(), new Date()));
+		assertTrue(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
 	}
 }
