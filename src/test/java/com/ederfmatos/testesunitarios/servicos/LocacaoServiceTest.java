@@ -59,9 +59,9 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveAlugarFilme() throws Exception {
 		// Cenário
-		
+
 		Assume.assumeFalse(verificarDiaSemana(new Date(), SATURDAY));
-		
+
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 2, 25.0);
 
@@ -137,65 +137,9 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void devePagar25PorcentoNoFilme3() throws Exception {
-		Usuario usuario = new Usuario("usuario");
-
-		List<Filme> filmes = Arrays.asList(new Filme("Velozes e furiosos 1", 5, 10.0),
-				new Filme("Velozes e furiosos 1", 5, 10.0), new Filme("Velozes e furiosos 1", 5, 10.0));
-
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-
-		error.checkThat("Terceiro filme deve ter 25% de desconto, logo seu valor final devera ser 7,50",
-				locacao.getFilmes().get(2).getPrecoLocacao(), is(equalTo(7.5)));
-	}
-
-	@Test
-	public void devePagar50PorcentoNoFilme4() throws Exception {
-		Usuario usuario = new Usuario("usuario");
-
-		List<Filme> filmes = Arrays.asList(new Filme("Velozes e furiosos 1", 5, 10.0),
-				new Filme("Velozes e furiosos 2", 5, 10.0), new Filme("Velozes e furiosos 3", 5, 10.0),
-				new Filme("Velozes e furiosos 4", 5, 10.0));
-
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-
-		error.checkThat("Quarto filme deve ter 50% de desconto, logo seu valor final devera ser 5,00",
-				locacao.getFilmes().get(3).getPrecoLocacao(), is(equalTo(5.0)));
-	}
-
-	@Test
-	public void devePagar75PorcentoNoFilme5() throws Exception {
-		Usuario usuario = new Usuario("usuario");
-
-		List<Filme> filmes = Arrays.asList(new Filme("Velozes e furiosos 1", 5, 10.0),
-				new Filme("Velozes e furiosos 2", 5, 10.0), new Filme("Velozes e furiosos 3", 5, 10.0),
-				new Filme("Velozes e furiosos 4", 5, 10.0), new Filme("Velozes e furiosos 5", 5, 10.0));
-
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-
-		error.checkThat("Quinto filme deve ter 75% de desconto, logo seu valor final devera ser 2,50",
-				locacao.getFilmes().get(4).getPrecoLocacao(), is(equalTo(2.5)));
-	}
-
-	@Test
-	public void devePagar100PorcentoNoFilme6() throws Exception {
-		Usuario usuario = new Usuario("usuario");
-
-		List<Filme> filmes = Arrays.asList(new Filme("Velozes e furiosos 1", 5, 10.0),
-				new Filme("Velozes e furiosos 2", 5, 10.0), new Filme("Velozes e furiosos 3", 5, 10.0),
-				new Filme("Velozes e furiosos 4", 5, 10.0), new Filme("Velozes e furiosos 5", 5, 10.0),
-				new Filme("Velozes e furiosos 6", 5, 10.0));
-
-		Locacao locacao = service.alugarFilme(usuario, filmes);
-
-		error.checkThat("Sexto filme deve ter 100% de desconto, logo seu valor final devera ser 0,00",
-				locacao.getFilmes().get(5).getPrecoLocacao(), is(equalTo(0.0)));
-	}
-
-	@Test
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws Exception {
 		Assume.assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
-		
+
 		Usuario usuario = new Usuario("usuario");
 
 		List<Filme> filmes = Arrays.asList(new Filme("Velozes e furiosos 1", 5, 10.0));
