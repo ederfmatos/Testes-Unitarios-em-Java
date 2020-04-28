@@ -8,6 +8,10 @@ import static org.junit.Assert.fail;
 
 import java.util.Date;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -22,10 +26,32 @@ public class LocacaoServiceTest {
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 
+	private LocacaoService service;
+
+	@Before
+	public void beforeTest() {
+		service = new LocacaoService();
+//		System.out.println("Antes de cada método");
+	}
+
+	@After
+	public void afterTest() {
+//		System.out.println("Após cada método");
+	}
+
+	@BeforeClass
+	public static void beforeClass() {
+//		System.out.println("Antes da classe ser instanciada, deve ser estático");
+	}
+
+	@AfterClass
+	public static void afterClass() {
+//		System.out.println("Depois da classe ser instanciada, deve ser estático");
+	}
+
 	@Test
 	public void testeLocacao() throws Exception {
 		// Cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 2, 25.0);
 
@@ -41,7 +67,6 @@ public class LocacaoServiceTest {
 	@Test(expected = Exception.class)
 	public void testeLocacaoSemEstoque() throws Exception {
 		// Cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 0, 25.0);
 
@@ -52,7 +77,6 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacaoSemEstoqueComTryCatch() {
 		// Cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 0, 25.0);
 
@@ -68,7 +92,6 @@ public class LocacaoServiceTest {
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void testeLocacaoSemEstoque3() throws Exception {
 		// Cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 0, 25.0);
 
@@ -78,7 +101,6 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacaoSemFilme() {
 		// Cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 
 		try {
@@ -93,7 +115,6 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacaoSemUsuario() {
 		// Cenário
-		LocacaoService service = new LocacaoService();
 		Filme filme = new Filme("VEF", 5, 25.0);
 
 		try {
