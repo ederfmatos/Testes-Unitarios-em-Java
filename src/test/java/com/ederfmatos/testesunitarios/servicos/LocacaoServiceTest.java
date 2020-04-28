@@ -1,5 +1,7 @@
 package com.ederfmatos.testesunitarios.servicos;
 
+import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiEm;
+import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiNumaSegunda;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
@@ -7,7 +9,6 @@ import static java.util.Calendar.MONDAY;
 import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -138,7 +139,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws Exception {
-		Assume.assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
+//		Assume.assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
 
 		Usuario usuario = new Usuario("usuario");
 
@@ -146,9 +147,8 @@ public class LocacaoServiceTest {
 
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
-		boolean isMonday = verificarDiaSemana(locacao.getDataRetorno(), MONDAY);
-
-		assertTrue(isMonday);
+		error.checkThat(locacao.getDataRetorno(), caiEm(MONDAY));
+		error.checkThat(locacao.getDataRetorno(), caiNumaSegunda());
 	}
 
 }
