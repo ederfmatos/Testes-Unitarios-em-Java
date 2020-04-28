@@ -3,18 +3,20 @@ package com.ederfmatos.testesunitarios.servicos;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
+import static java.util.Calendar.MONDAY;
+import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -57,6 +59,9 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveAlugarFilme() throws Exception {
 		// Cenário
+		
+		Assume.assumeFalse(verificarDiaSemana(new Date(), SATURDAY));
+		
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 2, 25.0);
 
@@ -189,13 +194,15 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws Exception {
+		Assume.assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
+		
 		Usuario usuario = new Usuario("usuario");
 
 		List<Filme> filmes = Arrays.asList(new Filme("Velozes e furiosos 1", 5, 10.0));
 
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
-		boolean isMonday = verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY);
+		boolean isMonday = verificarDiaSemana(locacao.getDataRetorno(), MONDAY);
 
 		assertTrue(isMonday);
 	}
