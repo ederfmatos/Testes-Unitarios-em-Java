@@ -3,6 +3,7 @@ package com.ederfmatos.testesunitarios.servicos;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.adicionarDias;
 
 import java.util.Date;
+import java.util.List;
 
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
@@ -11,13 +12,15 @@ import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
 
 public class LocacaoService {
 
-	public Locacao alugarFilme(Usuario usuario, Filme filme) throws Exception {
-		if (filme == null) {
-			throw new Exception("Filme é obrigatório");
+	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
+		if (filmes == null || filmes.isEmpty()) {
+			throw new Exception("Ao menos um filme é obrigatório");
 		}
 
-		if (filme.getEstoque() == 0) {
-			throw new FilmeSemEstoqueException("Filme sem estoque");
+		for (Filme filme : filmes) {
+			if (filme.getEstoque() == 0) {
+				throw new FilmeSemEstoqueException("Filme sem estoque");
+			}
 		}
 
 		if (usuario == null) {
@@ -25,10 +28,11 @@ public class LocacaoService {
 		}
 
 		Locacao locacao = new Locacao();
-		locacao.setFilme(filme);
+		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
-		locacao.setValor(filme.getPrecoLocacao());
+		locacao.setValor(filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao())
+				.reduce((total, filme) -> total + filme).orElse(0));
 
 		// Entrega no dia seguinte
 		Date dataEntrega = new Date();

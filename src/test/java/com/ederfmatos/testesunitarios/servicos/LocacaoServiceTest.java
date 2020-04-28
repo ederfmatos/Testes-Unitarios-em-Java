@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.After;
@@ -56,7 +57,7 @@ public class LocacaoServiceTest {
 		Filme filme = new Filme("VEF", 2, 25.0);
 
 		// Ação
-		Locacao locacao = service.alugarFilme(usuario, filme);
+		Locacao locacao = service.alugarFilme(usuario, Arrays.asList(filme));
 
 		// Verificação
 		error.checkThat(locacao.getValor(), is(equalTo(25.00)));
@@ -71,7 +72,7 @@ public class LocacaoServiceTest {
 		Filme filme = new Filme("VEF", 0, 25.0);
 
 		// Ação
-		service.alugarFilme(usuario, filme);
+		service.alugarFilme(usuario, Arrays.asList(filme));
 	}
 
 	@Test
@@ -82,7 +83,7 @@ public class LocacaoServiceTest {
 
 		try {
 			// Ação
-			service.alugarFilme(usuario, filme);
+			service.alugarFilme(usuario, Arrays.asList(filme));
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
 			error.checkThat(e.getMessage(), is(equalTo("Filme sem estoque")));
@@ -95,7 +96,7 @@ public class LocacaoServiceTest {
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 0, 25.0);
 
-		service.alugarFilme(usuario, filme);
+		service.alugarFilme(usuario, Arrays.asList(filme));
 	}
 
 	@Test
@@ -108,7 +109,7 @@ public class LocacaoServiceTest {
 			service.alugarFilme(usuario, null);
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
-			error.checkThat(e.getMessage(), is(equalTo("Filme é obrigatório")));
+			error.checkThat(e.getMessage(), is(equalTo("Ao menos um filme é obrigatório")));
 		}
 	}
 
@@ -119,7 +120,7 @@ public class LocacaoServiceTest {
 
 		try {
 			// Ação
-			service.alugarFilme(null, filme);
+			service.alugarFilme(null, Arrays.asList(filme));
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
 			error.checkThat(e.getMessage(), is(equalTo("Usuário é obrigatório")));
