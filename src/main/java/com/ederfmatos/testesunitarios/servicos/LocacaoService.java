@@ -1,7 +1,9 @@
 package com.ederfmatos.testesunitarios.servicos;
 
 import static com.ederfmatos.testesunitarios.utils.DataUtils.adicionarDias;
+import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,31 @@ public class LocacaoService {
 			throw new Exception("Usuário é obrigatório");
 		}
 
+		for (Filme filme : filmes) {
+			int index = filmes.indexOf(filme);
+
+			Double precoLocacao = filme.getPrecoLocacao();
+
+			switch (index) {
+			case 2:
+				precoLocacao = precoLocacao * 0.75;
+				break;
+			case 3:
+				precoLocacao = precoLocacao * 0.50;
+				break;
+			case 4:
+				precoLocacao = precoLocacao * 0.25;
+				break;
+			case 5:
+				precoLocacao = 0.0;
+				break;
+			default:
+				break;
+			}
+
+			filme.setPrecoLocacao(precoLocacao);
+		}
+
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
@@ -36,7 +63,13 @@ public class LocacaoService {
 
 		// Entrega no dia seguinte
 		Date dataEntrega = new Date();
+
 		dataEntrega = adicionarDias(dataEntrega, 1);
+
+		if (verificarDiaSemana(dataEntrega, Calendar.SATURDAY)) {
+			dataEntrega = adicionarDias(dataEntrega, 1);
+		}
+
 		locacao.setDataRetorno(dataEntrega);
 
 		// Salvando a locacao...
