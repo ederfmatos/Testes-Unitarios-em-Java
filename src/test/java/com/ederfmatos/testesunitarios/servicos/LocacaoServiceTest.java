@@ -2,8 +2,8 @@ package com.ederfmatos.testesunitarios.servicos;
 
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiEm;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiNumaSegunda;
-import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
-import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
+import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehAmanha;
+import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHoje;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
 import static java.util.Calendar.MONDAY;
 import static java.util.Calendar.SATURDAY;
@@ -71,8 +71,8 @@ public class LocacaoServiceTest {
 
 		// Verificação
 		error.checkThat(locacao.getValor(), is(equalTo(25.00)));
-		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+		error.checkThat(locacao.getDataLocacao(), ehHoje());
+		error.checkThat(locacao.getDataRetorno(), ehAmanha());
 	}
 
 	@Test(expected = Exception.class)
@@ -139,7 +139,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws Exception {
-//		Assume.assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
+		Assume.assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
 
 		Usuario usuario = new Usuario("usuario");
 
