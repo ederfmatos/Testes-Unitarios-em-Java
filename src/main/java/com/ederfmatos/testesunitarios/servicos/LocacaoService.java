@@ -7,12 +7,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
 import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
 
 public class LocacaoService {
+	
+	private LocacaoDAO dao;
 
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
 		if (filmes == null || filmes.isEmpty()) {
@@ -71,6 +74,8 @@ public class LocacaoService {
 		}
 
 		locacao.setDataRetorno(dataEntrega);
+		
+		dao.save(locacao);
 
 		// Salvando a locacao...
 		// TODO adicionar método para salvar

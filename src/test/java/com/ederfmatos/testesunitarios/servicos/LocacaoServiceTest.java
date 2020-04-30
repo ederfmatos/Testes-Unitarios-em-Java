@@ -1,7 +1,6 @@
 package com.ederfmatos.testesunitarios.servicos;
 
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiEm;
-import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiNumaSegunda;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehAmanha;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHoje;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
@@ -39,37 +38,29 @@ public class LocacaoServiceTest {
 	@Before
 	public void beforeTest() {
 		service = new LocacaoService();
-//		System.out.println("Antes de cada método");
 	}
 
 	@After
 	public void afterTest() {
-//		System.out.println("Após cada método");
 	}
 
 	@BeforeClass
 	public static void beforeClass() {
-//		System.out.println("Antes da classe ser instanciada, deve ser estático");
 	}
 
 	@AfterClass
 	public static void afterClass() {
-//		System.out.println("Depois da classe ser instanciada, deve ser estático");
 	}
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-		// Cenário
-
 		Assume.assumeFalse(verificarDiaSemana(new Date(), SATURDAY));
 
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 2, 25.0);
 
-		// Ação
 		Locacao locacao = service.alugarFilme(usuario, Arrays.asList(filme));
 
-		// Verificação
 		error.checkThat(locacao.getValor(), is(equalTo(25.00)));
 		error.checkThat(locacao.getDataLocacao(), ehHoje());
 		error.checkThat(locacao.getDataRetorno(), ehAmanha());
@@ -77,22 +68,18 @@ public class LocacaoServiceTest {
 
 	@Test(expected = Exception.class)
 	public void naoDeveAlugarFilmeSemEstoque() throws Exception {
-		// Cenário
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 0, 25.0);
 
-		// Ação
 		service.alugarFilme(usuario, Arrays.asList(filme));
 	}
 
 	@Test
 	public void testeLocacaoSemEstoqueComTryCatch() {
-		// Cenário
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 0, 25.0);
 
 		try {
-			// Ação
 			service.alugarFilme(usuario, Arrays.asList(filme));
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
@@ -102,7 +89,6 @@ public class LocacaoServiceTest {
 
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void testeLocacaoSemEstoque3() throws Exception {
-		// Cenário
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("VEF", 0, 25.0);
 
@@ -111,25 +97,22 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void naoDeveAlugarFilmeSemFilme() {
-		// Cenário
 		Usuario usuario = new Usuario("Usuario 1");
 
 		try {
-			// Ação
 			service.alugarFilme(usuario, null);
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
 			error.checkThat(e.getMessage(), is(equalTo("Ao menos um filme é obrigatório")));
 		}
 	}
+	
 
 	@Test
 	public void naoDeveAlugarFilmeSemUsuario() {
-		// Cenário
 		Filme filme = new Filme("VEF", 5, 25.0);
 
 		try {
-			// Ação
 			service.alugarFilme(null, Arrays.asList(filme));
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
@@ -148,7 +131,6 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		error.checkThat(locacao.getDataRetorno(), caiEm(MONDAY));
-		error.checkThat(locacao.getDataRetorno(), caiNumaSegunda());
 	}
 
 }
