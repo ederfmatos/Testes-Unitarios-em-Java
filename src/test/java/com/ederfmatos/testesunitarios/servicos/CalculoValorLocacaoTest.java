@@ -17,6 +17,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.ederfmatos.testesunitarios.daos.impl.LocacaoDAOImpl;
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
@@ -41,6 +42,7 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void beforeTest() {
 		service = new LocacaoService();
+		service.setLocacaoDao(new LocacaoDAOImpl());
 	}
 
 	private static Object[] getParametro(final int quantidaDeFilmes, final double valorEsperadoNoUltimoFilme, double percentualDeDesconto) {

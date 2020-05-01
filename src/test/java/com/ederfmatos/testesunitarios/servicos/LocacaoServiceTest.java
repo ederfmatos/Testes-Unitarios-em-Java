@@ -23,6 +23,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
+import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
+import com.ederfmatos.testesunitarios.daos.impl.LocacaoDAOImpl;
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
@@ -34,10 +36,13 @@ public class LocacaoServiceTest {
 	public ErrorCollector error = new ErrorCollector();
 
 	private LocacaoService service;
+	private LocacaoDAO locacaoDAO;
 
 	@Before
 	public void beforeTest() {
 		service = new LocacaoService();
+		locacaoDAO = new LocacaoDAOImpl();
+		service.setLocacaoDao(locacaoDAO);
 	}
 
 	@After
@@ -106,7 +111,6 @@ public class LocacaoServiceTest {
 			error.checkThat(e.getMessage(), is(equalTo("Ao menos um filme é obrigatório")));
 		}
 	}
-	
 
 	@Test
 	public void naoDeveAlugarFilmeSemUsuario() {
