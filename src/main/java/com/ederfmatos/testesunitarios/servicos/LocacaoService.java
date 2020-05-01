@@ -12,10 +12,12 @@ import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
 import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
+import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
 
 public class LocacaoService {
 	
 	private LocacaoDAO dao;
+	private SPCService spcService;
 
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
 		if (filmes == null || filmes.isEmpty()) {
@@ -30,6 +32,10 @@ public class LocacaoService {
 
 		if (usuario == null) {
 			throw new Exception("Usuário é obrigatório");
+		}
+		
+		if(spcService.possuiNegativacao(usuario)) {
+			throw new NegativacaoSpcException("Usuário negativado");
 		}
 
 		for (Filme filme : filmes) {
@@ -85,6 +91,10 @@ public class LocacaoService {
 	
 	public void setLocacaoDao(LocacaoDAO locacaoDAO) {
 		this.dao = locacaoDAO;
+	}
+	
+	public void setSPCService(SPCService spcService) {
+		this.spcService = spcService;
 	}
 
 }

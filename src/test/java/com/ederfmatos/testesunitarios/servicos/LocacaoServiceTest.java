@@ -1,5 +1,7 @@
 package com.ederfmatos.testesunitarios.servicos;
 
+import static com.ederfmatos.testesunitarios.builders.FilmeBuilder.umFilme;
+import static com.ederfmatos.testesunitarios.builders.UsuarioBuilder.umUsuario;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiEm;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehAmanha;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHoje;
@@ -9,6 +11,8 @@ import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -22,13 +26,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.mockito.Mockito;
 
 import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
 import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
+import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
 
 public class LocacaoServiceTest {
 
@@ -37,12 +41,16 @@ public class LocacaoServiceTest {
 
 	private LocacaoService service;
 	private LocacaoDAO locacaoDAO;
+	private SPCService spcService;
 
 	@Before
 	public void beforeTest() {
 		service = new LocacaoService();
-		locacaoDAO = Mockito.mock(LocacaoDAO.class);
+		locacaoDAO = mock(LocacaoDAO.class);
+		spcService = mock(SPCService.class);
+
 		service.setLocacaoDao(locacaoDAO);
+		service.setSPCService(spcService);
 	}
 
 	@After
@@ -135,6 +143,18 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		error.checkThat(locacao.getDataRetorno(), caiEm(MONDAY));
+	}
+
+	@Test(expected = NegativacaoSpcException.class)
+	public void naoDeveAlugarFilmeParaUsuarioNegativadoNoSPC() throws Exception {
+		Usuario usuario = umUsuario().agora();
+
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
+
+		when(spcService.possuiNegativacao(umUsuario().agora())).thenReturn(true);
+
+		service.alugarFilme(usuario, filmes);
+
 	}
 
 }

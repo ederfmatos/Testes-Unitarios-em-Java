@@ -2,6 +2,7 @@ package com.ederfmatos.testesunitarios.servicos;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +17,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
 
 import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
-import com.ederfmatos.testesunitarios.daos.impl.LocacaoDAOImpl;
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
@@ -32,7 +31,7 @@ public class CalculoValorLocacaoTest {
 
 	@Parameter(value = 1)
 	public double valorLocacao;
-	
+
 	@Parameter(value = 2)
 	public String cenario;
 
@@ -40,33 +39,36 @@ public class CalculoValorLocacaoTest {
 	public ErrorCollector error = new ErrorCollector();
 
 	private LocacaoService service;
+	private SPCService spcService;
+	private LocacaoDAO locacaoDAO;
 
 	@Before
 	public void beforeTest() {
 		service = new LocacaoService();
-		service.setLocacaoDao(Mockito.mock(LocacaoDAO.class));
+		spcService = mock(SPCService.class);
+		locacaoDAO = mock(LocacaoDAO.class);
+
+		service.setLocacaoDao(locacaoDAO);
+		service.setSPCService(spcService);
 	}
 
-	private static Object[] getParametro(final int quantidaDeFilmes, final double valorEsperadoNoUltimoFilme, double percentualDeDesconto) {
+	private static Object[] getParametro(final int quantidaDeFilmes, final double valorEsperadoNoUltimoFilme,
+			double percentualDeDesconto) {
 		List<Filme> filmes = new ArrayList<>();
 
 		for (int i = 0; i < quantidaDeFilmes; i++) {
 			filmes.add(new Filme("Filme número " + i, 2, 10.0));
 		}
 
-		return new Object[] { filmes, valorEsperadoNoUltimoFilme, quantidaDeFilmes + " Filmes: " + percentualDeDesconto+ "% de desconto" };
+		return new Object[] { filmes, valorEsperadoNoUltimoFilme,
+				quantidaDeFilmes + " Filmes: " + percentualDeDesconto + "% de desconto" };
 	}
 
 	@Parameters(name = "{2}")
 	public static Collection<Object[]> getParametros() {
-		return Arrays.asList(new Object[][] {
-			getParametro(2, 10, 0), 
-			getParametro(3, 7.5, 25), 
-			getParametro(4, 5.0, 50), 
-			getParametro(5, 2.5, 75), 
-			getParametro(6, 0.0, 100),
-			getParametro(7, 10, 0), 
-			});
+		return Arrays
+				.asList(new Object[][] { getParametro(2, 10, 0), getParametro(3, 7.5, 25), getParametro(4, 5.0, 50),
+						getParametro(5, 2.5, 75), getParametro(6, 0.0, 100), getParametro(7, 10, 0), });
 	}
 
 	@Test
