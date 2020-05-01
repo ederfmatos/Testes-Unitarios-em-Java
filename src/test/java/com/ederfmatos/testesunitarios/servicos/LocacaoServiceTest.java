@@ -22,9 +22,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.mockito.Mockito;
 
 import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
-import com.ederfmatos.testesunitarios.daos.impl.LocacaoDAOImpl;
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
@@ -41,7 +41,7 @@ public class LocacaoServiceTest {
 	@Before
 	public void beforeTest() {
 		service = new LocacaoService();
-		locacaoDAO = new LocacaoDAOImpl();
+		locacaoDAO = Mockito.mock(LocacaoDAO.class);
 		service.setLocacaoDao(locacaoDAO);
 	}
 

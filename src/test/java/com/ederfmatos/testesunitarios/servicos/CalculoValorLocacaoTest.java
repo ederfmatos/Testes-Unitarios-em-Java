@@ -16,7 +16,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
+import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
 import com.ederfmatos.testesunitarios.daos.impl.LocacaoDAOImpl;
 import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
@@ -42,7 +44,7 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void beforeTest() {
 		service = new LocacaoService();
-		service.setLocacaoDao(new LocacaoDAOImpl());
+		service.setLocacaoDao(Mockito.mock(LocacaoDAO.class));
 	}
 
 	private static Object[] getParametro(final int quantidaDeFilmes, final double valorEsperadoNoUltimoFilme, double percentualDeDesconto) {

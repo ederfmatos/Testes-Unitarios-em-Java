@@ -8,7 +8,7 @@ import com.ederfmatos.testesunitarios.servicos.CalculadoraTest;
 import com.ederfmatos.testesunitarios.servicos.CalculoValorLocacaoTest;
 import com.ederfmatos.testesunitarios.servicos.LocacaoServiceTest;
 
-@RunWith(Suite.class)
+//@RunWith(Suite.class)
 @SuiteClasses({ CalculadoraTest.class, CalculoValorLocacaoTest.class, LocacaoServiceTest.class })
 public class ExecutionSuite {
 
