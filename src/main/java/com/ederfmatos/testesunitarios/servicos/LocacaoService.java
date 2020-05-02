@@ -74,7 +74,7 @@ public class LocacaoService {
 	}
 
 	protected double calcularValorLocacao(List<Filme> filmes) {
-		return filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao()).reduce((total, filme) -> total + filme)
+		return filmes.parallelStream().mapToDouble(filme -> filme.getPrecoLocacao()).reduce((total, filme) -> total + filme)
 				.orElse(0);
 	}
 

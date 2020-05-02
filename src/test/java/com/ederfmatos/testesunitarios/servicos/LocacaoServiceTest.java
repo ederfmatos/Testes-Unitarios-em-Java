@@ -25,7 +25,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,10 +39,9 @@ import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
 import com.ederfmatos.testesunitarios.exceptions.LocadoraException;
 import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
 import com.ederfmatos.testesunitarios.exceptions.SPCException;
-import com.ederfmatos.testesunitarios.runners.ParallelRunner;
 import com.ederfmatos.testesunitarios.utils.DataUtils;
 
-@RunWith(ParallelRunner.class)
+//@RunWith(ParallelRunner.class)
 public class LocacaoServiceTest {
 
 	@Rule
@@ -64,13 +62,11 @@ public class LocacaoServiceTest {
 
 	@Before
 	public void beforeTest() {
-		System.out.println("Iniciando Locacao...");
 		initMocks(this);
 	}
 
 	@After
 	public void afterTest() {
-		System.out.println("Finalizando Locacao...");
 	}
 
 	@BeforeClass
