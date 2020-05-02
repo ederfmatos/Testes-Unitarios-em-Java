@@ -4,7 +4,6 @@ import static com.ederfmatos.testesunitarios.utils.DataUtils.adicionarDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
 import static java.util.Calendar.SUNDAY;
-import static java.util.Calendar.getInstance;
 
 import java.util.Date;
 import java.util.List;
@@ -53,10 +52,10 @@ public class LocacaoService {
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
-		locacao.setDataLocacao(getInstance().getTime());
+		locacao.setDataLocacao(obterDataAtual());
 		locacao.setValor(calcularValorLocacao(filmes));
 
-		Date dataEntrega = getInstance().getTime();
+		Date dataEntrega = obterDataAtual();
 		dataEntrega = adicionarDias(dataEntrega, 1);
 
 		if (verificarDiaSemana(dataEntrega, SUNDAY)) {
@@ -70,12 +69,16 @@ public class LocacaoService {
 		return locacao;
 	}
 
-	private double calcularValorLocacao(List<Filme> filmes) {
-		return filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao())
-				.reduce((total, filme) -> total + filme).orElse(0);
+	protected Date obterDataAtual() {
+		return new Date();
 	}
 
-	private void calcularDescontoFilmes(List<Filme> filmes) {
+	protected double calcularValorLocacao(List<Filme> filmes) {
+		return filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao()).reduce((total, filme) -> total + filme)
+				.orElse(0);
+	}
+
+	protected void calcularDescontoFilmes(List<Filme> filmes) {
 		for (Filme filme : filmes) {
 			int index = filmes.indexOf(filme);
 
@@ -111,7 +114,7 @@ public class LocacaoService {
 		Locacao novaLocacao = new Locacao();
 		novaLocacao.setFilmes(locacao.getFilmes());
 		novaLocacao.setUsuario(locacao.getUsuario());
-		novaLocacao.setDataLocacao(new Date());
+		novaLocacao.setDataLocacao(obterDataAtual());
 		novaLocacao.setDataRetorno(obterDataComDiferencaDias(dias));
 		novaLocacao.setValor(locacao.getValor() * dias);
 
