@@ -14,9 +14,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -29,6 +29,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
@@ -42,21 +44,21 @@ public class LocacaoServiceTest {
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 
+	@InjectMocks
 	private LocacaoService service;
+
+	@Mock
 	private LocacaoDAO locacaoDAO;
+
+	@Mock
 	private SPCService spcService;
+
+	@Mock
 	private EmailService emailService;
 
 	@Before
 	public void beforeTest() {
-		service = new LocacaoService();
-		locacaoDAO = mock(LocacaoDAO.class);
-		spcService = mock(SPCService.class);
-		emailService = mock(EmailService.class);
-
-		service.setLocacaoDao(locacaoDAO);
-		service.setSPCService(spcService);
-		service.setEmailService(emailService);
+		initMocks(this);
 	}
 
 	@After

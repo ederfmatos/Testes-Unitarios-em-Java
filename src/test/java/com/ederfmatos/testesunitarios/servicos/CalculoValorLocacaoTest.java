@@ -2,7 +2,7 @@ package com.ederfmatos.testesunitarios.servicos;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.mock;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
 import com.ederfmatos.testesunitarios.entidades.Filme;
@@ -38,18 +40,18 @@ public class CalculoValorLocacaoTest {
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 
+	@InjectMocks
 	private LocacaoService service;
+
+	@Mock
 	private SPCService spcService;
+
+	@Mock
 	private LocacaoDAO locacaoDAO;
 
 	@Before
 	public void beforeTest() {
-		service = new LocacaoService();
-		spcService = mock(SPCService.class);
-		locacaoDAO = mock(LocacaoDAO.class);
-
-		service.setLocacaoDao(locacaoDAO);
-		service.setSPCService(spcService);
+		initMocks(this);
 	}
 
 	private static Object[] getParametro(final int quantidaDeFilmes, final double valorEsperadoNoUltimoFilme,
