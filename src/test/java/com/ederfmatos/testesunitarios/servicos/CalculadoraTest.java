@@ -2,9 +2,14 @@ package com.ederfmatos.testesunitarios.servicos;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import com.ederfmatos.testesunitarios.runners.ParallelRunner;
+
+@RunWith(ParallelRunner.class)
 public class CalculadoraTest {
 
 	private Calculadora calculadora;
@@ -12,6 +17,12 @@ public class CalculadoraTest {
 	@Before
 	public void beforeTest() {
 		calculadora = new Calculadora();
+		System.out.println("Iniciando Calculadora");
+	}
+	
+	@After
+	public void after() {
+		System.out.println("Finalizando calculadora");
 	}
 
 	@Test
