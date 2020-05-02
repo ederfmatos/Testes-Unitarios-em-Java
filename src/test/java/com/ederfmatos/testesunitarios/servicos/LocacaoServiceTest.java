@@ -3,20 +3,28 @@ package com.ederfmatos.testesunitarios.servicos;
 import static com.ederfmatos.testesunitarios.builders.FilmeBuilder.umFilme;
 import static com.ederfmatos.testesunitarios.builders.LocacaoBuilder.umaLocacao;
 import static com.ederfmatos.testesunitarios.builders.UsuarioBuilder.umUsuario;
-import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiEm;
+import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiNumaSegunda;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehAmanha;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHoje;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHojeMaisDias;
+import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterData;
-import static java.util.Calendar.MONDAY;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MAY;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
+import static java.util.Calendar.getInstance;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +39,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -45,7 +53,7 @@ import com.ederfmatos.testesunitarios.exceptions.SPCException;
 import com.ederfmatos.testesunitarios.utils.DataUtils;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ LocacaoService.class, DataUtils.class })
+@PrepareForTest({ LocacaoService.class })
 public class LocacaoServiceTest {
 
 	@Rule
@@ -82,13 +90,23 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-		whenNew(Date.class).withNoArguments().thenReturn(obterData(1, 5, 2020));
+//		whenNew(Date.class).withNoArguments().thenReturn(obterData(1, 5, 2020));
+
+		Calendar instance = getInstance();
+		instance.set(DAY_OF_MONTH, 1);
+		instance.set(MONTH, MAY);
+		instance.set(YEAR, 2020);
+
+		mockStatic(Calendar.class);
+		PowerMockito.when(getInstance()).thenReturn(instance);
 
 		Locacao locacao = service.alugarFilme(umUsuario().agora(), umFilme().comEstoque(2).comPreco(25.0).numaLista());
 
 		error.checkThat(locacao.getValor(), equalTo(25.00));
-		error.checkThat(locacao.getDataLocacao(), ehHoje());
-		error.checkThat(locacao.getDataRetorno(), ehAmanha());
+//		error.checkThat(locacao.getDataLocacao(), ehHoje());
+//		error.checkThat(locacao.getDataRetorno(), ehAmanha());
+		error.checkThat(isMesmaData(locacao.getDataLocacao(), obterData(1, 5, 2020)), equalTo(true));
+		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterData(2, 5, 2020)), equalTo(true));
 	}
 
 	@Test(expected = Exception.class)
@@ -133,11 +151,22 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws Exception {
-		whenNew(Date.class).withNoArguments().thenReturn(obterData(2, 5, 2020));
+//		whenNew(Date.class).withNoArguments().thenReturn(obterData(2, 5, 2020));
+
+		Calendar instance = getInstance();
+		instance.set(DAY_OF_MONTH, 2);
+		instance.set(MONTH, MAY);
+		instance.set(YEAR, 2020);
+
+		mockStatic(Calendar.class);
+		PowerMockito.when(getInstance()).thenReturn(instance);
 
 		Locacao locacao = service.alugarFilme(umUsuario().agora(), umFilme().comEstoque(5).comPreco(10.0).numaLista());
 
-		error.checkThat(locacao.getDataRetorno(), caiEm(MONDAY));
+		error.checkThat(locacao.getDataRetorno(), caiNumaSegunda());
+
+		PowerMockito.verifyStatic(Calendar.class, times(2));
+		Calendar.getInstance();
 	}
 
 	@Test(expected = NegativacaoSpcException.class)

@@ -1,5 +1,7 @@
 package com.ederfmatos.testesunitarios.matchers;
 
+import static java.util.Calendar.MONDAY;
+
 public class PersonalMatchers {
 
 	public static DiaSemanaMatcher caiEm(int diaSemana) {
@@ -16,6 +18,10 @@ public class PersonalMatchers {
 	
 	public static DateMatchers ehHojeMaisDias(int dias) {
 		return new DateMatchers(dias);
+	}
+	
+	public static DiaSemanaMatcher caiNumaSegunda() {
+		return new DiaSemanaMatcher(MONDAY);
 	}
 
 }

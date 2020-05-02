@@ -4,6 +4,7 @@ import static com.ederfmatos.testesunitarios.utils.DataUtils.adicionarDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
 import static java.util.Calendar.SUNDAY;
+import static java.util.Calendar.getInstance;
 
 import java.util.Date;
 import java.util.List;
@@ -72,12 +73,11 @@ public class LocacaoService {
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
-		locacao.setDataLocacao(new Date());
+		locacao.setDataLocacao(getInstance().getTime());
 		locacao.setValor(filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao())
 				.reduce((total, filme) -> total + filme).orElse(0));
 
-		Date dataEntrega = new Date();
-
+		Date dataEntrega = getInstance().getTime();
 		dataEntrega = adicionarDias(dataEntrega, 1);
 
 		if (verificarDiaSemana(dataEntrega, SUNDAY)) {
