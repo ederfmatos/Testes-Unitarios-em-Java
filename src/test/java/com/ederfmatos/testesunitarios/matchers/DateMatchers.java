@@ -18,7 +18,6 @@ public class DateMatchers extends TypeSafeDiagnosingMatcher<Date> {
 		this.differenceDays = differenceDays;
 	}
 
-	@Override
 	public void describeTo(Description description) {
 		Date dataEsperada = obterDataComDiferencaDias(differenceDays);
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -27,7 +26,7 @@ public class DateMatchers extends TypeSafeDiagnosingMatcher<Date> {
 	}
 
 	@Override
-	protected boolean matchesSafely(Date date, Description mismatchDescription) {
+	protected boolean matchesSafely(Date date, Description description) {
 		return isMesmaData(date, obterDataComDiferencaDias(differenceDays));
 	}
 

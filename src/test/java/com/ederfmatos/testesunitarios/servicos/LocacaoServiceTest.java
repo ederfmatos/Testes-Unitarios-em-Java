@@ -7,17 +7,14 @@ import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiEm;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehAmanha;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHoje;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHojeMaisDias;
-import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
+import static com.ederfmatos.testesunitarios.utils.DataUtils.obterData;
 import static java.util.Calendar.MONDAY;
-import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -30,9 +27,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
 import com.ederfmatos.testesunitarios.entidades.Filme;
@@ -43,6 +44,8 @@ import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
 import com.ederfmatos.testesunitarios.exceptions.SPCException;
 import com.ederfmatos.testesunitarios.utils.DataUtils;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ LocacaoService.class, DataUtils.class })
 public class LocacaoServiceTest {
 
 	@Rule
@@ -78,12 +81,12 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void deveAlugarFilme() {
-		assumeFalse(verificarDiaSemana(new Date(), SATURDAY));
+	public void deveAlugarFilme() throws Exception {
+		whenNew(Date.class).withNoArguments().thenReturn(obterData(1, 5, 2020));
 
 		Locacao locacao = service.alugarFilme(umUsuario().agora(), umFilme().comEstoque(2).comPreco(25.0).numaLista());
 
-		error.checkThat(locacao.getValor(), is(equalTo(25.00)));
+		error.checkThat(locacao.getValor(), equalTo(25.00));
 		error.checkThat(locacao.getDataLocacao(), ehHoje());
 		error.checkThat(locacao.getDataRetorno(), ehAmanha());
 	}
@@ -99,7 +102,7 @@ public class LocacaoServiceTest {
 			service.alugarFilme(umUsuario().agora(), umFilme().semEstoque().comPreco(25.0).numaLista());
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
-			error.checkThat(e.getMessage(), is(equalTo("Filme sem estoque")));
+			error.checkThat(e.getMessage(), equalTo("Filme sem estoque"));
 		}
 	}
 
@@ -114,7 +117,7 @@ public class LocacaoServiceTest {
 			service.alugarFilme(umUsuario().agora(), null);
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
-			error.checkThat(e.getMessage(), is(equalTo("Ao menos um filme é obrigatório")));
+			error.checkThat(e.getMessage(), equalTo("Ao menos um filme é obrigatório"));
 		}
 	}
 
@@ -124,13 +127,13 @@ public class LocacaoServiceTest {
 			service.alugarFilme(null, umFilme().comEstoque(5).comPreco(25.0).numaLista());
 			fail("Deveria ter lançado exceção");
 		} catch (Exception e) {
-			error.checkThat(e.getMessage(), is(equalTo("Usuário é obrigatório")));
+			error.checkThat(e.getMessage(), equalTo("Usuário é obrigatório"));
 		}
 	}
 
 	@Test
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws Exception {
-		assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
+		whenNew(Date.class).withNoArguments().thenReturn(obterData(2, 5, 2020));
 
 		Locacao locacao = service.alugarFilme(umUsuario().agora(), umFilme().comEstoque(5).comPreco(10.0).numaLista());
 
@@ -169,7 +172,7 @@ public class LocacaoServiceTest {
 			service.alugarFilme(usuario, filmes);
 			fail();
 		} catch (Exception e) {
-			error.checkThat(e.getMessage(), is(equalTo("Problemas no SPC, tente novamente")));
+			error.checkThat(e.getMessage(), equalTo("Problemas no SPC, tente novamente"));
 		}
 	}
 
@@ -185,7 +188,7 @@ public class LocacaoServiceTest {
 
 		Locacao locacaoRetornada = captor.getValue();
 
-		error.checkThat(locacaoRetornada.getValor(), is(equalTo(30.0)));
+		error.checkThat(locacaoRetornada.getValor(), equalTo(30.0));
 		error.checkThat(locacaoRetornada.getDataLocacao(), ehHoje());
 		error.checkThat(locacaoRetornada.getDataRetorno(), ehHojeMaisDias(3));
 	}

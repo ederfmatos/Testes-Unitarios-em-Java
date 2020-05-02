@@ -15,8 +15,7 @@ public class DiaSemanaMatcher extends TypeSafeDiagnosingMatcher<Date> {
 	public DiaSemanaMatcher(int diaSemana) {
 		this.diaSemana = diaSemana;
 	}
-
-	@Override
+	
 	public void describeTo(Description description) {
 		description.appendText(buscaNomeDoDiaDaSemana(diaSemana));
 	}
