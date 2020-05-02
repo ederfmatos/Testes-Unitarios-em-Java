@@ -6,6 +6,7 @@ import static com.ederfmatos.testesunitarios.builders.UsuarioBuilder.umUsuario;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiEm;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehAmanha;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHoje;
+import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHojeMaisDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
 import static java.util.Calendar.MONDAY;
 import static java.util.Calendar.SATURDAY;
@@ -29,6 +30,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -169,6 +171,23 @@ public class LocacaoServiceTest {
 		} catch (Exception e) {
 			error.checkThat(e.getMessage(), is(equalTo("Problemas no SPC, tente novamente")));
 		}
+	}
+
+	@Test
+	public void deveProrrogarUmaLocacao() {
+		Locacao locacao = umaLocacao().agora();
+
+		service.prorrogarLocacao(locacao, 3);
+
+		ArgumentCaptor<Locacao> captor = ArgumentCaptor.forClass(Locacao.class);
+
+		verify(locacaoDAO).save(captor.capture());
+
+		Locacao locacaoRetornada = captor.getValue();
+
+		error.checkThat(locacaoRetornada.getValor(), is(equalTo(30.0)));
+		error.checkThat(locacaoRetornada.getDataLocacao(), ehHoje());
+		error.checkThat(locacaoRetornada.getDataRetorno(), ehHojeMaisDias(3));
 	}
 
 }

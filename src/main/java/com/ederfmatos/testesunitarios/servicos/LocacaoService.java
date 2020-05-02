@@ -1,6 +1,7 @@
 package com.ederfmatos.testesunitarios.servicos;
 
 import static com.ederfmatos.testesunitarios.utils.DataUtils.adicionarDias;
+import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
 import static java.util.Calendar.SUNDAY;
 
@@ -96,6 +97,17 @@ public class LocacaoService {
 		for (Locacao locacao : locacoes) {
 			emailService.notificarAtraso(locacao);
 		}
+	}
+
+	public void prorrogarLocacao(Locacao locacao, int dias) {
+		Locacao novaLocacao = new Locacao();
+		novaLocacao.setFilmes(locacao.getFilmes());
+		novaLocacao.setUsuario(locacao.getUsuario());
+		novaLocacao.setDataLocacao(new Date());
+		novaLocacao.setDataRetorno(obterDataComDiferencaDias(dias));
+		novaLocacao.setValor(locacao.getValor() * dias);
+
+		dao.save(novaLocacao);
 	}
 
 }

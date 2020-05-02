@@ -3,6 +3,8 @@ package com.ederfmatos.testesunitarios.matchers;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.obterDataComDiferencaDias;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.hamcrest.Description;
@@ -18,6 +20,10 @@ public class DateMatchers extends TypeSafeDiagnosingMatcher<Date> {
 
 	@Override
 	public void describeTo(Description description) {
+		Date dataEsperada = obterDataComDiferencaDias(differenceDays);
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+		description.appendText(dateFormat.format(dataEsperada));
 	}
 
 	@Override
