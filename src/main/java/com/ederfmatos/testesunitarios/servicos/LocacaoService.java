@@ -2,8 +2,8 @@ package com.ederfmatos.testesunitarios.servicos;
 
 import static com.ederfmatos.testesunitarios.utils.DataUtils.adicionarDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.verificarDiaSemana;
+import static java.util.Calendar.SUNDAY;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -15,9 +15,10 @@ import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
 import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
 
 public class LocacaoService {
-	
+
 	private LocacaoDAO dao;
 	private SPCService spcService;
+	private EmailService emailService;
 
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
 		if (filmes == null || filmes.isEmpty()) {
@@ -33,8 +34,8 @@ public class LocacaoService {
 		if (usuario == null) {
 			throw new Exception("Usuário é obrigatório");
 		}
-		
-		if(spcService.possuiNegativacao(usuario)) {
+
+		if (spcService.possuiNegativacao(usuario)) {
 			throw new NegativacaoSpcException("Usuário negativado");
 		}
 
@@ -55,9 +56,6 @@ public class LocacaoService {
 				break;
 			case 5:
 				precoLocacao = 0.0;
-				break;
-			default:
-				break;
 			}
 
 			filme.setPrecoLocacao(precoLocacao);
@@ -70,29 +68,37 @@ public class LocacaoService {
 		locacao.setValor(filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao())
 				.reduce((total, filme) -> total + filme).orElse(0));
 
-		// Entrega no dia seguinte
 		Date dataEntrega = new Date();
 
 		dataEntrega = adicionarDias(dataEntrega, 1);
 
-		if (verificarDiaSemana(dataEntrega, Calendar.SATURDAY)) {
+		if (verificarDiaSemana(dataEntrega, SUNDAY)) {
 			dataEntrega = adicionarDias(dataEntrega, 1);
 		}
 
 		locacao.setDataRetorno(dataEntrega);
-		
-		dao.save(locacao);
 
-		// Salvando a locacao...
-		// TODO adicionar método para salvar
+		dao.save(locacao);
 
 		return locacao;
 	}
-	
+
+	public void notificarAtrasos() {
+		List<Locacao> locacoes = dao.obterLocacoesPendentes();
+
+		for (Locacao locacao : locacoes) {
+			emailService.notificarAtraso(locacao);
+		}
+	}
+
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
+	}
+
 	public void setLocacaoDao(LocacaoDAO locacaoDAO) {
 		this.dao = locacaoDAO;
 	}
-	
+
 	public void setSPCService(SPCService spcService) {
 		this.spcService = spcService;
 	}

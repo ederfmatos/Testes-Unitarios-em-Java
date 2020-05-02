@@ -1,5 +1,7 @@
 package com.ederfmatos.testesunitarios.entidades;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.Date;
 import java.util.List;
 
@@ -50,4 +52,12 @@ public class Locacao {
 	public void setFilmes(List<Filme> filmes) {
 		this.filmes = filmes;
 	}
+
+	@Override
+	public String toString() {
+		return "Locacao [usuario=" + usuario.getNome() + ", filmes=["
+				+ filmes.stream().map(Filme::getNome).collect(joining()) + "], dataLocacao=" + dataLocacao
+				+ ", dataRetorno=" + dataRetorno + ", valor=" + valor + "]";
+	}
+
 }
