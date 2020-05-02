@@ -12,7 +12,9 @@ import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
 import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
+import com.ederfmatos.testesunitarios.exceptions.LocadoraException;
 import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
+import com.ederfmatos.testesunitarios.exceptions.SPCException;
 
 public class LocacaoService {
 
@@ -20,9 +22,10 @@ public class LocacaoService {
 	private SPCService spcService;
 	private EmailService emailService;
 
-	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
+	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes)
+			throws LocadoraException, FilmeSemEstoqueException, NegativacaoSpcException, SPCException {
 		if (filmes == null || filmes.isEmpty()) {
-			throw new Exception("Ao menos um filme é obrigatório");
+			throw new LocadoraException("Ao menos um filme é obrigatório");
 		}
 
 		for (Filme filme : filmes) {
@@ -32,11 +35,15 @@ public class LocacaoService {
 		}
 
 		if (usuario == null) {
-			throw new Exception("Usuário é obrigatório");
+			throw new LocadoraException("Usuário é obrigatório");
 		}
 
-		if (spcService.possuiNegativacao(usuario)) {
-			throw new NegativacaoSpcException("Usuário negativado");
+		try {
+			if (spcService.possuiNegativacao(usuario)) {
+				throw new NegativacaoSpcException("Usuário negativado");
+			}
+		} catch (SPCException e) {
+			throw new LocadoraException("Problemas no SPC, tente novamente");
 		}
 
 		for (Filme filme : filmes) {

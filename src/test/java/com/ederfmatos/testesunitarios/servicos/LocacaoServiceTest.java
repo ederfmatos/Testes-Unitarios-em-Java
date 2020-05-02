@@ -33,10 +33,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.ederfmatos.testesunitarios.daos.LocacaoDAO;
+import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
 import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
 import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
+import com.ederfmatos.testesunitarios.exceptions.SPCException;
 import com.ederfmatos.testesunitarios.utils.DataUtils;
 
 public class LocacaoServiceTest {
@@ -74,7 +76,7 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void deveAlugarFilme() throws Exception {
+	public void deveAlugarFilme() {
 		assumeFalse(verificarDiaSemana(new Date(), SATURDAY));
 
 		Locacao locacao = service.alugarFilme(umUsuario().agora(), umFilme().comEstoque(2).comPreco(25.0).numaLista());
@@ -152,6 +154,21 @@ public class LocacaoServiceTest {
 		service.notificarAtrasos();
 
 		verify(emailService).notificarAtraso(locacao);
+	}
+
+	@Test
+	public void deveTratarErroNoSPC() {
+		Usuario usuario = umUsuario().agora();
+		List<Filme> filmes = umFilme().numaLista();
+
+		when(spcService.possuiNegativacao(usuario)).thenThrow(new SPCException("Deu ruim"));
+
+		try {
+			service.alugarFilme(usuario, filmes);
+			fail();
+		} catch (Exception e) {
+			error.checkThat(e.getMessage(), is(equalTo("Problemas no SPC, tente novamente")));
+		}
 	}
 
 }
