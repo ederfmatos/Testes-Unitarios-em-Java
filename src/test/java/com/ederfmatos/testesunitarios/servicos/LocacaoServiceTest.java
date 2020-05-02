@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.reflect.Whitebox.invokeMethod;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -233,6 +234,14 @@ public class LocacaoServiceTest {
 		error.checkThat(locacao.getValor(), equalTo(1.0));
 
 		PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
+	}
+
+	@Test
+	public void deveCalcularValorLocacao() throws Exception {
+		List<Filme> filmes = Arrays.asList(umFilme().agora(), umFilme().agora(), umFilme().agora());
+
+		Double valor = (Double) invokeMethod(service, "calcularValorLocacao", filmes);
+		error.checkThat(valor, equalTo(150.0));
 	}
 
 }
