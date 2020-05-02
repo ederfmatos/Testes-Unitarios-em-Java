@@ -4,7 +4,6 @@ import static com.ederfmatos.testesunitarios.builders.FilmeBuilder.umFilme;
 import static com.ederfmatos.testesunitarios.builders.LocacaoBuilder.umaLocacao;
 import static com.ederfmatos.testesunitarios.builders.UsuarioBuilder.umUsuario;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.caiNumaSegunda;
-import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehAmanha;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHoje;
 import static com.ederfmatos.testesunitarios.matchers.PersonalMatchers.ehHojeMaisDias;
 import static com.ederfmatos.testesunitarios.utils.DataUtils.isMesmaData;
@@ -21,11 +20,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -48,6 +45,7 @@ import com.ederfmatos.testesunitarios.entidades.Filme;
 import com.ederfmatos.testesunitarios.entidades.Locacao;
 import com.ederfmatos.testesunitarios.entidades.Usuario;
 import com.ederfmatos.testesunitarios.exceptions.FilmeSemEstoqueException;
+import com.ederfmatos.testesunitarios.exceptions.LocadoraException;
 import com.ederfmatos.testesunitarios.exceptions.NegativacaoSpcException;
 import com.ederfmatos.testesunitarios.exceptions.SPCException;
 import com.ederfmatos.testesunitarios.utils.DataUtils;
@@ -74,6 +72,7 @@ public class LocacaoServiceTest {
 	@Before
 	public void beforeTest() {
 		initMocks(this);
+		service = PowerMockito.spy(service);
 	}
 
 	@After
@@ -109,7 +108,7 @@ public class LocacaoServiceTest {
 		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterData(2, 5, 2020)), equalTo(true));
 	}
 
-	@Test(expected = Exception.class)
+	@Test(expected = FilmeSemEstoqueException.class)
 	public void naoDeveAlugarFilmeSemEstoque() throws Exception {
 		service.alugarFilme(umUsuario().agora(), umFilme().semEstoque().comPreco(25.0).numaLista());
 	}
@@ -119,7 +118,7 @@ public class LocacaoServiceTest {
 		try {
 			service.alugarFilme(umUsuario().agora(), umFilme().semEstoque().comPreco(25.0).numaLista());
 			fail("Deveria ter lançado exceção");
-		} catch (Exception e) {
+		} catch (FilmeSemEstoqueException e) {
 			error.checkThat(e.getMessage(), equalTo("Filme sem estoque"));
 		}
 	}
@@ -134,7 +133,7 @@ public class LocacaoServiceTest {
 		try {
 			service.alugarFilme(umUsuario().agora(), null);
 			fail("Deveria ter lançado exceção");
-		} catch (Exception e) {
+		} catch (LocadoraException e) {
 			error.checkThat(e.getMessage(), equalTo("Ao menos um filme é obrigatório"));
 		}
 	}
@@ -144,7 +143,7 @@ public class LocacaoServiceTest {
 		try {
 			service.alugarFilme(null, umFilme().comEstoque(5).comPreco(25.0).numaLista());
 			fail("Deveria ter lançado exceção");
-		} catch (Exception e) {
+		} catch (LocadoraException e) {
 			error.checkThat(e.getMessage(), equalTo("Usuário é obrigatório"));
 		}
 	}
@@ -220,6 +219,20 @@ public class LocacaoServiceTest {
 		error.checkThat(locacaoRetornada.getValor(), equalTo(30.0));
 		error.checkThat(locacaoRetornada.getDataLocacao(), ehHoje());
 		error.checkThat(locacaoRetornada.getDataRetorno(), ehHojeMaisDias(3));
+	}
+
+	@Test
+	public void deveAlugarFilmeSemDesconto() throws Exception {
+		Usuario usuario = umUsuario().agora();
+
+		List<Filme> filmes = Arrays.asList(umFilme().agora(), umFilme().agora(), umFilme().agora());
+
+		PowerMockito.doReturn(1.0).when(service, "calcularValorLocacao", filmes);
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+
+		error.checkThat(locacao.getValor(), equalTo(1.0));
+
+		PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
 	}
 
 }

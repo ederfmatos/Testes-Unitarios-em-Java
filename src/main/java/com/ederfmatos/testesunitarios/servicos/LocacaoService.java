@@ -48,6 +48,34 @@ public class LocacaoService {
 			throw new LocadoraException("Problemas no SPC, tente novamente");
 		}
 
+		calcularDescontoFilmes(filmes);
+
+		Locacao locacao = new Locacao();
+		locacao.setFilmes(filmes);
+		locacao.setUsuario(usuario);
+		locacao.setDataLocacao(getInstance().getTime());
+		locacao.setValor(calcularValorLocacao(filmes));
+
+		Date dataEntrega = getInstance().getTime();
+		dataEntrega = adicionarDias(dataEntrega, 1);
+
+		if (verificarDiaSemana(dataEntrega, SUNDAY)) {
+			dataEntrega = adicionarDias(dataEntrega, 1);
+		}
+
+		locacao.setDataRetorno(dataEntrega);
+
+		dao.save(locacao);
+
+		return locacao;
+	}
+
+	private double calcularValorLocacao(List<Filme> filmes) {
+		return filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao())
+				.reduce((total, filme) -> total + filme).orElse(0);
+	}
+
+	private void calcularDescontoFilmes(List<Filme> filmes) {
 		for (Filme filme : filmes) {
 			int index = filmes.indexOf(filme);
 
@@ -69,26 +97,6 @@ public class LocacaoService {
 
 			filme.setPrecoLocacao(precoLocacao);
 		}
-
-		Locacao locacao = new Locacao();
-		locacao.setFilmes(filmes);
-		locacao.setUsuario(usuario);
-		locacao.setDataLocacao(getInstance().getTime());
-		locacao.setValor(filmes.stream().mapToDouble(filme -> filme.getPrecoLocacao())
-				.reduce((total, filme) -> total + filme).orElse(0));
-
-		Date dataEntrega = getInstance().getTime();
-		dataEntrega = adicionarDias(dataEntrega, 1);
-
-		if (verificarDiaSemana(dataEntrega, SUNDAY)) {
-			dataEntrega = adicionarDias(dataEntrega, 1);
-		}
-
-		locacao.setDataRetorno(dataEntrega);
-
-		dao.save(locacao);
-
-		return locacao;
 	}
 
 	public void notificarAtrasos() {
